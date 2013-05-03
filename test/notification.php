@@ -12,7 +12,7 @@ include '../source/Autoloader.php';
 $Client = new \APNS\Notification\Client();
 
 // Set secure certificate filename
-$Client->setCertificateFile('certificate.prodaction.pem');
+$Client->setCertificateFile('certificate.production.pem');
 
 // Create needed alert item
 $Item = new \APNS\Notification\AlertItem();
