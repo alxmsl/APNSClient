@@ -104,16 +104,6 @@ final class Client extends AbstractClient {
     }
 
     /**
-     * @param bool $isSandbox enable sandbox mode
-     */
-    public function __construct($isSandbox = false) {
-        $url = $isSandbox
-            ? self::ENDPOINT_SANDBOX
-            : self::ENDPOINT_PRODUCTION;
-        $this->setUrl($url);
-    }
-
-    /**
      * Send notification by device token
      * @param string $token delivery device token
      * @param BasePayload $Payload payload object

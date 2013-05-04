@@ -18,7 +18,13 @@ abstract class AbstractClient {
      * Default connect parameters
      */
     const   DEFAULT_CONNECT_TIMEOUT = 3,    // Default connect timeout, sec
-            DEFAULT_CONNECT_TRIES = 3;      // Default connection tries
+            DEFAULT_CONNECT_TRIES   = 3;    // Default connection tries
+
+    /**
+     * APNS service endpoints
+     */
+    const   ENDPOINT_PRODUCTION = '',   // For production
+            ENDPOINT_SANDBOX    = '';   // For developer
 
     /**
      * @var string connection url
@@ -64,6 +70,16 @@ abstract class AbstractClient {
      * @var resource socket connection resource
      */
     protected $Handler = null;
+
+    /**
+     * @param bool $isSandbox enable sandbox mode
+     */
+    public function __construct($isSandbox = false) {
+        $url = $isSandbox
+            ? static::ENDPOINT_SANDBOX
+            : static::ENDPOINT_PRODUCTION;
+        $this->setUrl($url);
+    }
 
     /**
      * Setter for connect attempt timeout
@@ -292,7 +308,7 @@ abstract class AbstractClient {
             stream_set_read_buffer($this->Handler, 6);
         } else {
             throw new ClientConnectException('Cannot connect to \''
-                . $this->getUrl() . '\' with error code ['
+                . $this->getConnectionUrl() . '\' with error code ['
                 . $errorNumber . '] and message \''
                 . $errorString . '\' with \''
                 . $this->getConnectTimeout() . '\' seconds timeout');
