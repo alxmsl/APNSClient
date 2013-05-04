@@ -1,3 +1,3 @@
 test/*.pem
 .idea/
-test/notification.prod.php
+test/*.prod.php
