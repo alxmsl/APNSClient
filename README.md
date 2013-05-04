@@ -111,3 +111,25 @@ Send notification
     // Send notification to the device
     $result = $Client->send('c0RreCtT0kEN', $Payload);
     var_dump($result);
+
+Use the feedback service
+-------
+
+    // Create APNS notification client
+    $Client = new \APNS\Feedback\Client();
+
+    // Set secure certificate filename
+    $Client->setCertificateFile('certificate.production.pem')
+        ->setProtocolSchemeSSL();
+
+    $Client->process(function ($time, $token) {
+        echo date('Y-m-d H:i:s', $time) . ' - ' . $token . "\n";
+        return true;
+    }, false);
+
+    var_dump(
+        $Client->getReadCount(),
+        $Client->getProcessedCount(),
+        $Client->getUnprocessedCount(),
+        $Client->getErrorCount()
+    );
