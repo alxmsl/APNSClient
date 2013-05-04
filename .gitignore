@@ -1,4 +1,3 @@
-test/topface.dev.pem
+test/*.pem
 .idea/
-test/topface.prod.pem
 test/notification.prod.php
