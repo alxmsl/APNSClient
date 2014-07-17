@@ -1,18 +1,20 @@
 <?php
 
-namespace APNS\Notification;
+namespace alxmsl\APNS\Notification;
+use alxmsl\APNS\Notification\Exception\CannotCropBodyException;
+use JsonSerializable;
 
 /**
  * Notification payload class
  * @author alxmsl
  * @date 5/1/13
  */ 
-class BasePayload implements \JsonSerializable {
+class BasePayload implements JsonSerializable {
     /**
      * Payload constants
      */
-    const   LENGTH_MAX = 211,                   // Maximum payload size
-            DEFAULT_DELIVERY_TIMEOUT = 86400;   // Default payload delivery timeout
+    const LENGTH_MAX = 211,                   // Maximum payload size
+          DEFAULT_DELIVERY_TIMEOUT = 86400;   // Default payload delivery timeout
 
     /**
      * @var int payload identifier
