@@ -8,8 +8,11 @@
 // Include autoloader
 include '../source/Autoloader.php';
 
+use alxmsl\APNS\Notification\AlertItem;
+use alxmsl\APNS\Notification\BasePayload;
+
 // Create custom payload class
-final class CustomPayload extends \APNS\Notification\BasePayload {
+final class CustomPayload extends BasePayload {
     /**
      * @var null|string custom field
      */
@@ -46,7 +49,7 @@ final class CustomPayload extends \APNS\Notification\BasePayload {
 }
 
 // Create simple alert item
-$SimpleItem = new \APNS\Notification\AlertItem();
+$SimpleItem = new AlertItem();
 $SimpleItem->setBody('You got your emails.');
 
 // Create payload instance

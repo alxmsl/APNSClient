@@ -1,13 +1,16 @@
 <?php
 
-namespace APNS\Notification;
+namespace alxmsl\APNS\Notification;
+use alxmsl\APNS\Notification\Exception\CannotCropBodyException;
+use JsonSerializable;
+use LogicException;
 
 /**
  * Alert notification item
  * @author alxmsl
  * @date 5/1/13
  */ 
-final class AlertItem implements \JsonSerializable {
+final class AlertItem implements JsonSerializable {
     /**
      * Default minimum text length
      */
@@ -50,11 +53,11 @@ final class AlertItem implements \JsonSerializable {
 
     /**
      * @param int $minimumLength minimum length for notification text
-     * @throws \LogicException when not admitted value
+     * @throws LogicException when not admitted value
      */
     public function __construct($minimumLength = self::DEFAULT_LENGTH_MIN) {
         if ($minimumLength < 1) {
-            throw new \LogicException('minimum text body length must be greater less 0');
+            throw new LogicException('minimum text body length must be greater less 0');
         }
         $this->minimumLength = (int) $minimumLength;
     }
@@ -204,13 +207,3 @@ final class AlertItem implements \JsonSerializable {
         }
     }
 }
-
-/**
- * Base alert item exception
- */
-class AlertItemException extends \Exception {}
-
-/**
- * Exception when can not crop notification text for needed length
- */
-final class CannotCropBodyException extends AlertItemException {}

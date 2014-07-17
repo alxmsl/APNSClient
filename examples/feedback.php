@@ -8,8 +8,10 @@
 // Include autoloader
 include '../source/Autoloader.php';
 
+use APNS\Feedback\Client;
+
 // Create APNS notification client
-$Client = new \APNS\Feedback\Client();
+$Client = new Client();
 
 // Set secure certificate filename
 $Client->setCertificateFile('certificate.production.pem')
