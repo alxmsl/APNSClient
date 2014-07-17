@@ -1,8 +1,9 @@
 <?php
 
 namespace APNS\Feedback;
-
-use APNS\AbstractClient;
+use alxmsl\APNS\AbstractClient;
+use alxmsl\APNS\Feedback\Exception\FeedbackProcessorException;
+use Closure;
 
 /**
  * APNS feedback service client
@@ -13,8 +14,8 @@ final class Client extends AbstractClient {
     /**
      * APNS feedback service endpoints
      */
-    const   ENDPOINT_PRODUCTION = 'feedback.push.apple.com:2196',           // For production
-            ENDPOINT_SANDBOX    = 'feedback.sandbox.push.apple.com:2196';   // For developer
+    const ENDPOINT_PRODUCTION = 'feedback.push.apple.com:2196',           // For production
+          ENDPOINT_SANDBOX    = 'feedback.sandbox.push.apple.com:2196';   // For developer
 
     /**
      * Length of binary packet
@@ -87,7 +88,7 @@ final class Client extends AbstractClient {
      * @throws FeedbackProcessorException feedback item processor item exception
      * @return int count of processed feedback items
      */
-    public function process(\Closure $processor, $panic = true) {
+    public function process(Closure $processor, $panic = true) {
         while (!feof($this->getHandler())) {
             $data = @fread($this->getHandler(), self::LENGTH_PACKET);
             if (strlen($data) == self::LENGTH_PACKET) {
@@ -113,8 +114,3 @@ final class Client extends AbstractClient {
         return $this->processedCount;
     }
 }
-
-/**
- * Base exception for feedback item processing errors
- */
-class FeedbackProcessorException extends \Exception {}

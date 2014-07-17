@@ -8,19 +8,23 @@
 // Include autoloader
 include '../source/Autoloader.php';
 
+use alxmsl\APNS\Notification\AlertItem;
+use alxmsl\APNS\Notification\BasePayload;
+use alxmsl\APNS\Notification\Client;
+
 // Create simple alert item
-$SimpleItem = new \APNS\Notification\AlertItem();
+$SimpleItem = new AlertItem();
 $SimpleItem->setBody('просто уведомление');
 
 // Create simple payload
-$SimplePayload = new \APNS\Notification\BasePayload();
+$SimplePayload = new BasePayload();
 $SimplePayload->setAlertItem($SimpleItem);
 
 // Look at simple payload
 var_dump((string) $SimplePayload);
 
 // Create localized alert item
-$LocalizedItem = new \APNS\Notification\AlertItem();
+$LocalizedItem = new AlertItem();
 $LocalizedItem->setLocalizedKey('GAME_PLAY_REQUEST_FORMAT')
     ->setLocalizedArgs(array(
         'Jenna',
@@ -28,19 +32,19 @@ $LocalizedItem->setLocalizedKey('GAME_PLAY_REQUEST_FORMAT')
     ));
 
 // Create localized payload
-$LocalizedPayload = new \APNS\Notification\BasePayload();
+$LocalizedPayload = new BasePayload();
 $LocalizedPayload->setAlertItem($LocalizedItem);
 
 // Look at localized payload
 var_dump((string) $LocalizedPayload);
 
 // Create custom action button item
-$CustomActionItem = new \APNS\Notification\AlertItem();
+$CustomActionItem = new AlertItem();
 $CustomActionItem->setBody('Bob wants to play poker')
     ->setActionLocalizedKey('PLAY');
 
 // Create payload with badge
-$BadgePayload = new \APNS\Notification\BasePayload();
+$BadgePayload = new BasePayload();
 $BadgePayload->setAlertItem($CustomActionItem)
     ->setBadgeNumber(5);
 
@@ -48,7 +52,7 @@ $BadgePayload->setAlertItem($CustomActionItem)
 var_dump((string) $BadgePayload);
 
 // Create payload with sound
-$SoundPayload = new \APNS\Notification\BasePayload();
+$SoundPayload = new BasePayload();
 $SoundPayload->setAlertItem($SimpleItem)
     ->setBadgeNumber(9)
     ->setSoundFile('bingbong.aiff');

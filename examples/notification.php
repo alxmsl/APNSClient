@@ -8,18 +8,22 @@
 // Include autoloader
 include '../source/Autoloader.php';
 
+use alxmsl\APNS\Notification\AlertItem;
+use alxmsl\APNS\Notification\BasePayload;
+use alxmsl\APNS\Notification\Client;
+
 // Create APNS notification client
-$Client = new \APNS\Notification\Client();
+$Client = new Client();
 
 // Set secure certificate filename
 $Client->setCertificateFile('certificate.production.pem');
 
 // Create needed alert item
-$Item = new \APNS\Notification\AlertItem();
+$Item = new AlertItem();
 $Item->setBody('test1');
 
 // Create payload
-$Payload = new \APNS\Notification\BasePayload();
+$Payload = new BasePayload();
 $Payload->setAlertItem($Item)
     ->setBadgeNumber(1)
     ->setIdentifier(time());

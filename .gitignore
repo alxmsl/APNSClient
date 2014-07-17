@@ -1,3 +1,5 @@
 test/*.pem
 .idea/
 test/*.prod.php
+vendor/
+composer.lock

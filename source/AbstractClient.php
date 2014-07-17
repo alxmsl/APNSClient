@@ -1,6 +1,8 @@
 <?php
 
-namespace APNS;
+namespace alxmsl\APNS;
+use alxmsl\APNS\Exception\ClientConnectException;
+use InvalidArgumentException;
 
 /**
  * Abstract client for APNS connection
@@ -11,20 +13,20 @@ abstract class AbstractClient {
     /**
      * Supported protocol constants
      */
-    const   PROTOCOL_SSL = 'ssl',
-            PROTOCOL_TLS = 'tls';
+    const PROTOCOL_SSL = 'ssl',
+          PROTOCOL_TLS = 'tls';
 
     /**
      * Default connect parameters
      */
-    const   DEFAULT_CONNECT_TIMEOUT = 3,    // Default connect timeout, sec
-            DEFAULT_CONNECT_TRIES   = 3;    // Default connection tries
+    const DEFAULT_CONNECT_TIMEOUT = 3, // Default connect timeout, sec
+          DEFAULT_CONNECT_TRIES   = 3; // Default connection tries
 
     /**
      * APNS service endpoints
      */
-    const   ENDPOINT_PRODUCTION = '',   // For production
-            ENDPOINT_SANDBOX    = '';   // For developer
+    const ENDPOINT_PRODUCTION = '', // For production
+          ENDPOINT_SANDBOX    = ''; // For developer
 
     /**
      * @var string connection url
@@ -85,11 +87,11 @@ abstract class AbstractClient {
      * Setter for connect attempt timeout
      * @param int $connectAttemptTimeout connect attempt timeout, usec
      * @return AbstractClient self
-     * @throws \InvalidArgumentException when not admitted value
+     * @throws InvalidArgumentException when not admitted value
      */
     public function setConnectAttemptTimeout($connectAttemptTimeout) {
         if ($connectAttemptTimeout < 0) {
-            throw new \InvalidArgumentException('incorrect attempt timeout \'' . $connectAttemptTimeout . '\' for connection');
+            throw new InvalidArgumentException('incorrect attempt timeout \'' . $connectAttemptTimeout . '\' for connection');
         }
         $this->connectAttemptTimeout = (int) $connectAttemptTimeout;
         return $this;
@@ -107,11 +109,11 @@ abstract class AbstractClient {
      * Setter for connect timeout
      * @param int $connectTimeout connect timeout, sec
      * @return AbstractClient self
-     * @throws \InvalidArgumentException when not admitted value
+     * @throws InvalidArgumentException when not admitted value
      */
     public function setConnectTimeout($connectTimeout) {
         if ($connectTimeout < 0) {
-            throw new \InvalidArgumentException('incorrect connect timeout \'' . $connectTimeout . '\'');
+            throw new InvalidArgumentException('incorrect connect timeout \'' . $connectTimeout . '\'');
         }
         $this->connectTimeout = (int) $connectTimeout;
         return $this;
@@ -155,11 +157,11 @@ abstract class AbstractClient {
      * Setter for connection tries value
      * @param int $connectionTries connection tries value
      * @return AbstractClient self
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function setConnectionTries($connectionTries) {
         if ($connectionTries < 1) {
-            throw new \InvalidArgumentException('incorrect connection tries value \'' . $connectionTries . '\'');
+            throw new InvalidArgumentException('incorrect connection tries value \'' . $connectionTries . '\'');
         }
         $this->connectionTries = (int) $connectionTries;
         return $this;
@@ -325,13 +327,3 @@ abstract class AbstractClient {
         $this->Handler = null;
     }
 }
-
-/**
- * Client exception
- */
-class ClientException extends \Exception {}
-
-/**
- * Client connect exception
- */
-final class ClientConnectException extends ClientException {}

@@ -1,10 +1,22 @@
 <?php
 
-namespace APNS\Notification;
+namespace alxmsl\APNS\Notification;
+use alxmsl\APNS\AbstractClient;
+use alxmsl\APNS\Exception\InvalidPayloadSizeErrorException;
+use alxmsl\APNS\Exception\InvalidTokenErrorException;
+use alxmsl\APNS\Exception\InvalidTokenSizeErrorException;
+use alxmsl\APNS\Exception\InvalidTopicSizeErrorException;
+use alxmsl\APNS\Exception\MissingDeviceTokenErrorException;
+use alxmsl\APNS\Exception\MissingPayloadErrorException;
+use alxmsl\APNS\Exception\MissingTopicErrorException;
+use alxmsl\APNS\Exception\ProcessingErrorException;
+use alxmsl\APNS\Exception\SendNotificationErrorException;
+use alxmsl\APNS\Exception\ShutdownServiceErrorException;
+use alxmsl\APNS\Exception\UnknownErrorException;
+use alxmsl\APNS\Exception\UnsupportedCommandException;
+use alxmsl\APNS\Exception\UnsupportedErrorException;
+use InvalidArgumentException;
 
-use APNS\ClientException,
-    APNS\Notification\BasePayload,
-    APNS\AbstractClient;
 
 /**
  * APNS notificaton service client
@@ -15,18 +27,18 @@ final class Client extends AbstractClient {
     /**
      * Error strings
      */
-    const   ERROR_NONE                  = 'No errors encountered',
-            ERROR_PROCESSING            = 'Processing error',
-            ERROR_MISSING_TOKEN         = 'Missing device token',
-            ERROR_MISSING_TOPIC         = 'Missing topic',
-            ERROR_MISSING_PAYLOAD       = 'Missing payload',
-            ERROR_INVALID_TOKEN_SIZE    = 'Invalid token size',
-            ERROR_INVALID_TOPIC_SIZE    = 'Invalid topic size',
-            ERROR_INVALID_PAYLOAD_SIZE  = 'Invalid payload size',
-            ERROR_INVALID_TOKEN         = 'Invalid token',
-            ERROR_SERVICE_SHUTDOWN      = 'Shutdown',
-            ERROR_UNKNOWN               = 'None (unknown)',
-            ERROR_UNSUPPORTED           = 'Unsupported';
+    const ERROR_NONE                  = 'No errors encountered',
+          ERROR_PROCESSING            = 'Processing error',
+          ERROR_MISSING_TOKEN         = 'Missing device token',
+          ERROR_MISSING_TOPIC         = 'Missing topic',
+          ERROR_MISSING_PAYLOAD       = 'Missing payload',
+          ERROR_INVALID_TOKEN_SIZE    = 'Invalid token size',
+          ERROR_INVALID_TOPIC_SIZE    = 'Invalid topic size',
+          ERROR_INVALID_PAYLOAD_SIZE  = 'Invalid payload size',
+          ERROR_INVALID_TOKEN         = 'Invalid token',
+          ERROR_SERVICE_SHUTDOWN      = 'Shutdown',
+          ERROR_UNKNOWN               = 'None (unknown)',
+          ERROR_UNSUPPORTED           = 'Unsupported';
 
     /**
      * Read error timeout, usec
@@ -36,22 +48,22 @@ final class Client extends AbstractClient {
     /**
      * APNS command constants
      */
-    const   COMMAND_SIMPLE_PUSH     = 0, // Push command
-            COMMAND_ENHANCED_PUSH   = 1, // Enhanced push command
-            COMMAND_RESPONSE        = 8; // Error response command
+    const COMMAND_SIMPLE_PUSH     = 0, // Push command
+          COMMAND_ENHANCED_PUSH   = 1, // Enhanced push command
+          COMMAND_RESPONSE        = 8; // Error response command
 
     /**
      * Length of binary values
      */
-    const   LENGTH_BINARY_TOKEN = 32,   // Length of binary token
-            LENGTH_REQUEST      = 256,  // Length of notification request
-            LENGTH_RESPONSE     = 6;    // Length of enhanced response
+    const LENGTH_BINARY_TOKEN = 32,   // Length of binary token
+          LENGTH_REQUEST      = 256,  // Length of notification request
+          LENGTH_RESPONSE     = 6;    // Length of enhanced response
 
     /**
      * APNS notification service endpoints
      */
-    const   ENDPOINT_PRODUCTION = 'gateway.push.apple.com:2195',            // For production
-            ENDPOINT_SANDBOX    = 'gateway.sandbox.push.apple.com:2195';    // For developer
+    const ENDPOINT_PRODUCTION = 'gateway.push.apple.com:2195',            // For production
+          ENDPOINT_SANDBOX    = 'gateway.sandbox.push.apple.com:2195';    // For developer
 
     /**
      * @var int read error state timeout, usec
@@ -67,11 +79,11 @@ final class Client extends AbstractClient {
      * Setter for read error timeout
      * @param int $readTimeout read error timeout, usec
      * @return Client self
-     * @throws \InvalidArgumentException when not admitted value
+     * @throws InvalidArgumentException when not admitted value
      */
     public function setReadTimeout($readTimeout) {
         if ($readTimeout < 0) {
-            throw new \InvalidArgumentException('incorrect read error state timeout \'' . $readTimeout . '\'');
+            throw new InvalidArgumentException('incorrect read error state timeout \'' . $readTimeout . '\'');
         }
         $this->readTimeout = (int) $readTimeout;
         return $this;
@@ -203,68 +215,3 @@ final class Client extends AbstractClient {
         return $command;
     }
 }
-
-/**
- * Base exception for send notification errors
- */
-class SendNotificationErrorException extends ClientException {}
-
-/**
- * Exception for processing error on delivery payload in enhanced mode
- */
-final class ProcessingErrorException extends SendNotificationErrorException {}
-
-/**
- * Exception for missing device token on delivery payload in enhanced mode
- */
-final class MissingDeviceTokenErrorException extends SendNotificationErrorException {}
-
-/**
- * Exception for missing topic on delivery payload in enhanced mode
- */
-final class MissingTopicErrorException extends SendNotificationErrorException {}
-
-/**
- * Exception for missing payload on delivery payload in enhanced mode
- */
-final class MissingPayloadErrorException extends SendNotificationErrorException {}
-
-/**
- * Exception for invalid token size on delivery payload in enhanced mode
- */
-final class InvalidTokenSizeErrorException extends SendNotificationErrorException {}
-
-/**
- * Exception for invalid topic size on delivery payload in enhanced mode
- */
-final class InvalidTopicSizeErrorException extends SendNotificationErrorException {}
-
-/**
- * Exception for invalid payload size on delivery payload in enhanced mode
- */
-final class InvalidPayloadSizeErrorException extends SendNotificationErrorException {}
-
-/**
- * Exception for invalid token on delivery payload in enhanced mode
- */
-final class InvalidTokenErrorException extends SendNotificationErrorException {}
-
-/**
- * Exception for service shutdown error on delivery payload in enhanced mode
- */
-final class ShutdownServiceErrorException extends SendNotificationErrorException {}
-
-/**
- * Exception for unknown error on delivery payload in enhanced mode
- */
-final class UnknownErrorException extends SendNotificationErrorException {}
-
-/**
- * Exception for unsupported error on delivery payload in enhanced mode
- */
-final class UnsupportedErrorException extends SendNotificationErrorException {}
-
-/**
- * Exception for unsupported response command on delivery payload in enhanced mode
- */
-class UnsupportedCommandException extends \Exception {}
