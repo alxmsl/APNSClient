@@ -1,0 +1,19 @@
+{
+    "name": "alxmsl/apnsclient",
+    "description": "Client for Apple Push Notification Service (APNS)",
+    "keywords": ["apns", "apple", "push", "notification"],
+    "license": "WTFPL",
+    "authors": [
+        {
+            "name": "alxmsl",
+            "email": "alexey.y.maslov@gmail.com"
+        }
+    ],
+    "support": {
+        "email": "alexey.y.maslov@gmail.com",
+        "issues": "https://github.com/alxmsl/APNSClient/issues"
+    },
+    "autoload": {
+        "psr-4": {"alxmsl\\APNS\\": "source/"}
+    }
+}
