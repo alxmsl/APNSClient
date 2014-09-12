@@ -1,5 +1,5 @@
-test/*.pem
 .idea/
-test/*.prod.php
+examples/*.prod.php
+examples/*.pem
 vendor/
 composer.lock
