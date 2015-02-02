@@ -20,7 +20,7 @@ class BasePayload implements JsonSerializable {
     /**
      * Payload constants
      */
-    const LENGTH_MAX = 211,                   // Maximum payload size
+    const LENGTH_MAX               = 256,     // Maximum payload size for iOS prior v.8 and OSX
           DEFAULT_DELIVERY_TIMEOUT = 86400;   // Default payload delivery timeout
 
     /**
@@ -181,7 +181,7 @@ class BasePayload implements JsonSerializable {
      */
     public function __toString() {
         $result = json_encode($this, JSON_UNESCAPED_UNICODE);
-        if (mb_strlen($result) > self::LENGTH_MAX) {
+        if (strlen($result) > self::LENGTH_MAX) {
             $excess = mb_strlen($result) - self::LENGTH_MAX;
             $bodySize = mb_strlen($this->getAlertItem()->getBody());
             try {
