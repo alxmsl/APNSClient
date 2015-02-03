@@ -20,7 +20,8 @@ class BasePayload implements JsonSerializable {
     /**
      * Payload constants
      */
-    const LENGTH_MAX               = 256,     // Maximum payload size for iOS prior v.8 and OSX
+    const LENGTH_IOS7_MAX          = 256,     // Maximum payload size for iOS prior v.8 and OSX
+          LENGTH_IOS8_MAX          = 2048,    // Maximum payload size for iOS 8
           DEFAULT_DELIVERY_TIMEOUT = 86400;   // Default payload delivery timeout
 
     /**
@@ -47,6 +48,16 @@ class BasePayload implements JsonSerializable {
      * @var null|string sound application file
      */
     private $soundFile = null;
+
+    /**
+     * @var bool true if payload sends for iOS 8 devices (with extended payload size)
+     */
+    private $isExtended = false;
+
+    /**
+     * @var bool new content availability flag
+     */
+    private $isContentAvailable = false;
 
     /**
      * Payload identifier setter
@@ -147,6 +158,45 @@ class BasePayload implements JsonSerializable {
     }
 
     /**
+     * @return boolean true if payload sends for iOS 8 devices (with extended payload size)
+     */
+    public function isExtended() {
+        return $this->isExtended;
+    }
+
+    /**
+     * @param boolean $isExtended true if payload sends for iOS 8 devices (with extended payload size)
+     */
+    public function setIsExtended($isExtended) {
+        $this->isExtended = (bool) $isExtended;
+        return $this;
+    }
+
+    /**
+     * @return int maximum payload size for notification payload
+     */
+    public function getMaximumPayloadSize() {
+        return $this->isExtended()
+            ? self::LENGTH_IOS8_MAX
+            : self::LENGTH_IOS7_MAX;
+    }
+
+    /**
+     * @return boolean new content availability flag
+     */
+    public function isContentAvailable() {
+        return $this->isContentAvailable;
+    }
+
+    /**
+     * @param boolean $isContentAvailable new content availability flag
+     */
+    public function setIsContentAvailable($isContentAvailable) {
+        $this->isContentAvailable = (bool) $isContentAvailable;
+        return $this;
+    }
+
+    /**
      * JsonSerializable implementation
      * @return array payload json serializable instance
      */
@@ -165,6 +215,9 @@ class BasePayload implements JsonSerializable {
                 $result['alert'] = $alert;
             }
         }
+        if ($this->isContentAvailable()) {
+            $result['content-available'] = 1;
+        }
 
         if (!empty($result)) {
             return array(
@@ -181,8 +234,9 @@ class BasePayload implements JsonSerializable {
      */
     public function __toString() {
         $result = json_encode($this, JSON_UNESCAPED_UNICODE);
-        if (strlen($result) > self::LENGTH_MAX) {
-            $excess = mb_strlen($result) - self::LENGTH_MAX;
+        $maximumPayloadSize = $this->getMaximumPayloadSize();
+        if (strlen($result) > $maximumPayloadSize) {
+            $excess = mb_strlen($result) - $maximumPayloadSize;
             $bodySize = mb_strlen($this->getAlertItem()->getBody());
             try {
                 $this->getAlertItem()->crop($bodySize - $excess);
