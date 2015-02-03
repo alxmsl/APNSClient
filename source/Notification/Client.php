@@ -34,18 +34,18 @@ final class Client extends AbstractClient {
     /**
      * Error strings
      */
-    const ERROR_NONE                  = 'No errors encountered',
-          ERROR_PROCESSING            = 'Processing error',
-          ERROR_MISSING_TOKEN         = 'Missing device token',
-          ERROR_MISSING_TOPIC         = 'Missing topic',
-          ERROR_MISSING_PAYLOAD       = 'Missing payload',
-          ERROR_INVALID_TOKEN_SIZE    = 'Invalid token size',
-          ERROR_INVALID_TOPIC_SIZE    = 'Invalid topic size',
-          ERROR_INVALID_PAYLOAD_SIZE  = 'Invalid payload size',
-          ERROR_INVALID_TOKEN         = 'Invalid token',
-          ERROR_SERVICE_SHUTDOWN      = 'Shutdown',
-          ERROR_UNKNOWN               = 'None (unknown)',
-          ERROR_UNSUPPORTED           = 'Unsupported';
+    const ERROR_NONE                 = 'No errors encountered',
+          ERROR_PROCESSING           = 'Processing error',
+          ERROR_MISSING_TOKEN        = 'Missing device token',
+          ERROR_MISSING_TOPIC        = 'Missing topic',
+          ERROR_MISSING_PAYLOAD      = 'Missing payload',
+          ERROR_INVALID_TOKEN_SIZE   = 'Invalid token size',
+          ERROR_INVALID_TOPIC_SIZE   = 'Invalid topic size',
+          ERROR_INVALID_PAYLOAD_SIZE = 'Invalid payload size',
+          ERROR_INVALID_TOKEN        = 'Invalid token',
+          ERROR_SERVICE_SHUTDOWN     = 'Shutdown',
+          ERROR_UNKNOWN              = 'None (unknown)',
+          ERROR_UNSUPPORTED          = 'Unsupported';
 
     /**
      * Read error timeout, usec
@@ -55,9 +55,9 @@ final class Client extends AbstractClient {
     /**
      * APNS command constants
      */
-    const COMMAND_SIMPLE_PUSH     = 0, // Push command
-          COMMAND_ENHANCED_PUSH   = 1, // Enhanced push command
-          COMMAND_RESPONSE        = 8; // Error response command
+    const COMMAND_SIMPLE_PUSH   = 0, // Push command
+          COMMAND_ENHANCED_PUSH = 1, // Enhanced push command
+          COMMAND_RESPONSE      = 8; // Error response command
 
     /**
      * Length of binary values
@@ -181,7 +181,7 @@ final class Client extends AbstractClient {
                                     throw new UnsupportedErrorException(self::ERROR_UNKNOWN, $response['statusCode']);
                             }
                         } else {
-                            throw new UnsupportedCommandException('Unsupported enhanced command \'' . $response['command'] . '\'');
+                            throw new UnsupportedCommandException(sprintf('Unsupported enhanced command %s', $response['command']));
                         }
                     } else {
                         return false;
@@ -189,7 +189,7 @@ final class Client extends AbstractClient {
                 case feof($this->getHandler()):
                     $this->disconnect();
                     if ($panic) {
-                        throw new SendNotificationErrorException('sent \'' . $sentBytes . '\' bytes, except \'' . strlen($command) . '\' bytes');
+                        throw new SendNotificationErrorException('Connection was closed after notification sending');
                     } else {
                         return false;
                     }
@@ -199,7 +199,7 @@ final class Client extends AbstractClient {
         } else {
             $this->disconnect();
             if ($panic) {
-                throw new SendNotificationErrorException('sent \'' . $sentBytes . '\' bytes, except \'' . strlen($command) . '\' bytes');
+                throw new SendNotificationErrorException(sprintf('sent %s bytes, expected %s bytes', $sentBytes, strlen($command)));
             } else {
                 return false;
             }
