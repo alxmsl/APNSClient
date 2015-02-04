@@ -166,6 +166,7 @@ class BasePayload implements JsonSerializable {
 
     /**
      * @param boolean $isExtended true if payload sends for iOS 8 devices (with extended payload size)
+     * @return $this self instance
      */
     public function setIsExtended($isExtended) {
         $this->isExtended = (bool) $isExtended;
@@ -190,6 +191,7 @@ class BasePayload implements JsonSerializable {
 
     /**
      * @param boolean $isContentAvailable new content availability flag
+     * @return $this self instance
      */
     public function setIsContentAvailable($isContentAvailable) {
         $this->isContentAvailable = (bool) $isContentAvailable;

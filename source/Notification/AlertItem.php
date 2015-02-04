@@ -59,6 +59,21 @@ final class AlertItem implements JsonSerializable {
     private $minimumLength = 0;
 
     /**
+     * @var null|string notification title
+     */
+    private $title = null;
+
+    /**
+     * @var null|string localized application key for notification title
+     */
+    private $titleLocalizedKey = null;
+
+    /**
+     * @var null|array|string argument for localized notification title
+     */
+    private $titleLocalizedArgs = null;
+
+    /**
      * @param int $minimumLength minimum length for notification text
      * @throws LogicException when not admitted value
      */
@@ -136,7 +151,7 @@ final class AlertItem implements JsonSerializable {
      */
     public function setLocalizedArgs($localizedArgs) {
         $this->localizedArgs = !is_null($localizedArgs)
-            ? (string) $localizedArgs
+            ? (array) $localizedArgs
             : null;
         return $this;
     }
@@ -167,6 +182,59 @@ final class AlertItem implements JsonSerializable {
      */
     public function getLocalizedKey() {
         return $this->localizedKey;
+    }
+
+    /**
+     * @return null|string notification title if exists
+     */
+    public function getTitle() {
+        return $this->title;
+    }
+
+    /**
+     * @param null|string $title notification title if exists
+     * @return $this self instance
+     */
+    public function setTitle($title) {
+        $this->title = !is_null($title)
+            ? (string) $title
+            : null;
+        return $this;
+    }
+
+    /**
+     * @return null|string localized application key for notification title
+     */
+    public function getTitleLocalizedKey() {
+        return $this->titleLocalizedKey;
+    }
+
+    /**
+     * @param null|string $titleLocalizedKey localized application key for notification title
+     * @return $this self instance
+     */
+    public function setTitleLocalizedKey($titleLocalizedKey) {
+        $this->titleLocalizedKey = !is_null($titleLocalizedKey)
+            ? (string) $titleLocalizedKey
+            : null;
+        return $this;
+    }
+
+    /**
+     * @return array|null|string argument for localized notification title
+     */
+    public function getTitleLocalizedArgs() {
+        return $this->titleLocalizedArgs;
+    }
+
+    /**
+     * @param array|null|string $titleLocalizedArgs argument for localized notification title
+     */
+    public function setTitleLocalizedArgs($titleLocalizedArgs) {
+        $this->titleLocalizedArgs = !is_null($titleLocalizedArgs)
+            ? (array) $titleLocalizedArgs
+            : null;
+        return $this;
     }
 
     /**
