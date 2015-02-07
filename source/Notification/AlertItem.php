@@ -34,9 +34,9 @@ final class AlertItem implements JsonSerializable {
     private $body = null;
 
     /**
-     * @var string|null localized key for action button or NULL for no action button
+     * @var string|null|int localized key for action button or NULL for no action button
      */
-    private $actionLocalizedKey = PHP_EOL;
+    private $actionLocalizedKey = -1;
 
     /**
      * @var null|string localized application key for text notification
@@ -44,7 +44,7 @@ final class AlertItem implements JsonSerializable {
     private $localizedKey = null;
 
     /**
-     * @var null|array|string argument for localized text notification
+     * @var null|array argument for localized text notification
      */
     private $localizedArgs = null;
 
@@ -64,14 +64,14 @@ final class AlertItem implements JsonSerializable {
     private $title = null;
 
     /**
-     * @var null|string localized application key for notification title
+     * @var null|string localized application key for notification title or NULL
      */
-    private $titleLocalizedKey = null;
+    private $titleLocalizedKey = -1;
 
     /**
-     * @var null|array|string argument for localized notification title
+     * @var null|array argument for localized notification title or NULL
      */
-    private $titleLocalizedArgs = null;
+    private $titleLocalizedArgs = -1;
 
     /**
      * @param int $minimumLength minimum length for notification text
@@ -110,9 +110,7 @@ final class AlertItem implements JsonSerializable {
      * @return $this
      */
     public function setBody($body) {
-        $this->body = !is_null($body)
-            ? (string) $body
-            : null;
+        $this->body = (string) $body;
         return $this;
     }
 
@@ -130,9 +128,7 @@ final class AlertItem implements JsonSerializable {
      * @return $this
      */
     public function setLaunchImageFile($launchImageFile) {
-        $this->launchImageFile = !is_null($launchImageFile)
-            ? (string) $launchImageFile
-            : null;
+        $this->launchImageFile = (string) $launchImageFile;
         return $this;
     }
 
@@ -150,15 +146,13 @@ final class AlertItem implements JsonSerializable {
      * @return $this
      */
     public function setLocalizedArgs($localizedArgs) {
-        $this->localizedArgs = !is_null($localizedArgs)
-            ? (array) $localizedArgs
-            : null;
+        $this->localizedArgs = (array) $localizedArgs;
         return $this;
     }
 
     /**
      * Getter for localized text arguments
-     * @return array|null|string localized text arguments if set
+     * @return array|null localized text arguments if set
      */
     public function getLocalizedArgs() {
         return $this->localizedArgs;
@@ -170,9 +164,7 @@ final class AlertItem implements JsonSerializable {
      * @return $this
      */
     public function setLocalizedKey($localizedKey) {
-        $this->localizedKey = !is_null($localizedKey)
-            ? (string) $localizedKey
-            : null;
+        $this->localizedKey = (string) $localizedKey;
         return $this;
     }
 
@@ -196,9 +188,7 @@ final class AlertItem implements JsonSerializable {
      * @return $this self instance
      */
     public function setTitle($title) {
-        $this->title = !is_null($title)
-            ? (string) $title
-            : null;
+        $this->title = (string) $title;
         return $this;
     }
 
@@ -245,16 +235,25 @@ final class AlertItem implements JsonSerializable {
         $result = array();
 
         if (!is_null($this->getLocalizedKey())) {
-            $result['loc-key'] = (string) $this->getLocalizedKey();
+            $result['loc-key'] = $this->getLocalizedKey();
         }
         if (!is_null($this->getLocalizedArgs())) {
             $result['loc-args'] = $this->getLocalizedArgs();
         }
         if (!is_null($this->getLaunchImageFile())) {
-            $result['launch-image'] = (string) $this->getLaunchImageFile();
+            $result['launch-image'] = $this->getLaunchImageFile();
         }
-        if ($this->getActionLocalizedKey() != PHP_EOL) {
+        if ($this->getActionLocalizedKey() != -1) {
             $result['action-loc-key'] = $this->getActionLocalizedKey();
+        }
+        if (!is_null($this->getTitle())) {
+            $result['title'] = $this->getTitle();
+        }
+        if ($this->getTitleLocalizedKey() != -1) {
+            $result['title-loc-key'] = $this->getTitleLocalizedKey();
+        }
+        if ($this->getTitleLocalizedArgs() != -1) {
+            $result['title-loc-args'] = $this->getTitleLocalizedArgs();
         }
         if (!is_null($this->getBody())) {
             if (!empty($result)) {
