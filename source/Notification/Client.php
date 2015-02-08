@@ -23,7 +23,7 @@ use alxmsl\APNS\Exception\UnknownErrorException;
 use alxmsl\APNS\Exception\UnsupportedCommandException;
 use alxmsl\APNS\Exception\UnsupportedErrorException;
 use InvalidArgumentException;
-
+use RuntimeException;
 
 /**
  * APNS notificaton service client
@@ -57,14 +57,17 @@ final class Client extends AbstractClient {
      */
     const COMMAND_SIMPLE_PUSH   = 0, // Push command
           COMMAND_ENHANCED_PUSH = 1, // Enhanced push command
+          COMMAND_2_PUSH        = 2, // Code 2 push command
           COMMAND_RESPONSE      = 8; // Error response command
 
     /**
      * Length of binary values
      */
-    const LENGTH_BINARY_TOKEN = 32,   // Length of binary token
-          LENGTH_REQUEST      = 256,  // Length of notification request
-          LENGTH_RESPONSE     = 6;    // Length of enhanced response
+    const LENGTH_BINARY_TOKEN    = 32,  // Length of binary token
+          LENGTH_REQUEST         = 256, // Length of notification request
+          LENGTH_RESPONSE        = 6,   // Length of enhanced response
+          LENGTH_IDENTIFIER      = 4,   // Length of notification identifier
+          LENGTH_EXPIRATION_TIME = 4;   // Length of expiration time
 
     /**
      * APNS notification service endpoints
@@ -78,9 +81,9 @@ final class Client extends AbstractClient {
     private $readTimeout = self::DEFAULT_READ_TIMEOUT;
 
     /**
-     * @var bool enabled enhanced mode
+     * @var int push command code
      */
-    private $enhancedMode = true;
+    private $commandCode = self::COMMAND_2_PUSH;
 
     /**
      * Setter for read error timeout
@@ -105,21 +108,27 @@ final class Client extends AbstractClient {
     }
 
     /**
-     * Setter for enhanced mode
-     * @param bool $enhancedMode enable enhanced value
-     * @return Client self
+     * @return int command push code
      */
-    public function setEnhancedMode($enhancedMode) {
-        $this->enhancedMode = (bool) $enhancedMode;
-        return $this;
+    public function getCommandCode() {
+        return $this->commandCode;
     }
 
     /**
-     * Getter of enabled enhanced mode value
-     * @return bool enabled enhanced mode value or not
+     * @param int $commandCode command push code
+     * @return $this self instance
+     * @throws InvalidArgumentException when command code was unsupported now
      */
-    public function isEnhancedMode() {
-        return $this->enhancedMode;
+    public function setCommandCode($commandCode) {
+        switch ($commandCode) {
+            case self::COMMAND_2_PUSH:
+            case self::COMMAND_ENHANCED_PUSH:
+            case self::COMMAND_SIMPLE_PUSH:
+                $this->commandCode = (int) $commandCode;
+                return $this;
+            default:
+                throw new InvalidArgumentException(sprintf('unsupported command code %s', $commandCode));
+        }
     }
 
     /**
@@ -143,7 +152,7 @@ final class Client extends AbstractClient {
      * @throws InvalidTokenErrorException when was invalid token on delivery payload in enhanced mode
      */
     public function send($token, BasePayload $Payload, $panic = true) {
-        $command = $this->createPushCommand($token, $Payload, $this->isEnhancedMode());
+        $command = $this->createPushCommand($token, $Payload);
         $sentBytes = @fwrite($this->getHandler(), $command);
         if ($sentBytes == strlen($command)) {
             usleep($this->getReadTimeout());
@@ -213,12 +222,22 @@ final class Client extends AbstractClient {
      * @return string push notification command
      */
     private function createPushCommand($token, BasePayload $Payload) {
-        $expirationTime = time() + $Payload->getDeliveryTimeout();
-        $command = $this->isEnhancedMode()
-            ? pack('CNNnH*', self::COMMAND_ENHANCED_PUSH, $Payload->getIdentifier(), $expirationTime, self::LENGTH_BINARY_TOKEN, $token)
-            : pack('CnH*', self::COMMAND_SIMPLE_PUSH, self::LENGTH_BINARY_TOKEN, $token);
-        $command .= pack('n', strlen($Payload));
-        $command .= (string) $Payload;
-        return $command;
+        switch ($this->getCommandCode()) {
+            case self::COMMAND_SIMPLE_PUSH:
+                return pack('CnH*', $this->getCommandCode(), self::LENGTH_BINARY_TOKEN, $token)
+                    . pack('nA*', strlen($Payload), (string) $Payload);
+            case self::COMMAND_ENHANCED_PUSH:
+                return pack('CNNnH*', $this->getCommandCode(), $Payload->getIdentifier(), $Payload->getExpirationTime(), self::LENGTH_BINARY_TOKEN, $token)
+                    . pack('nA*', strlen($Payload), (string) $Payload);
+            case self::COMMAND_2_PUSH:
+                $frame = pack('CnH*', 1, self::LENGTH_BINARY_TOKEN, $token)
+                    . pack('CnA*', 2, strlen($Payload), (string) $Payload)
+                    . pack('CnA*', 3, self::LENGTH_IDENTIFIER, $Payload->getIdentifier())
+                    . pack('CnN', 4, self::LENGTH_EXPIRATION_TIME, $Payload->getExpirationTime())
+                    . pack('CnC', 5, 1, $Payload->getPriority());
+                return pack('CNA*', $this->getCommandCode(), strlen($frame), $frame);
+            default:
+                throw new RuntimeException(sprintf('could not build command for code %s', $this->getCommandCode()));
+        }
     }
 }
