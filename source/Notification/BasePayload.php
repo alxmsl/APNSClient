@@ -9,6 +9,7 @@
 
 namespace alxmsl\APNS\Notification;
 use alxmsl\APNS\Notification\Exception\CannotCropBodyException;
+use InvalidArgumentException;
 use JsonSerializable;
 
 /**
@@ -23,6 +24,9 @@ class BasePayload implements JsonSerializable {
     const LENGTH_IOS7_MAX          = 256,     // Maximum payload size for iOS prior v.8 and OSX
           LENGTH_IOS8_MAX          = 2048,    // Maximum payload size for iOS 8
           DEFAULT_DELIVERY_TIMEOUT = 86400;   // Default payload delivery timeout
+
+    const PRIORITY_IMMEDIATE = 10, // Immediate priority code
+          PRIORITY_POWERLESS = 5;  // Powerless priority code
 
     /**
      * @var int payload identifier
@@ -60,6 +64,11 @@ class BasePayload implements JsonSerializable {
     private $isContentAvailable = false;
 
     /**
+     * @var int payload delivery priority
+     */
+    private $priority = self::PRIORITY_IMMEDIATE;
+
+    /**
      * Payload identifier setter
      * @param int $identifier payload identifier
      * @return BasePayload self
@@ -93,6 +102,13 @@ class BasePayload implements JsonSerializable {
      */
     public function getDeliveryTimeout() {
         return $this->deliveryTimeout;
+    }
+
+    /**
+     * @return int expiration time for this notification
+     */
+    public function getExpirationTime() {
+        return time() + $this->getDeliveryTimeout();
     }
 
     /**
@@ -196,6 +212,29 @@ class BasePayload implements JsonSerializable {
     public function setIsContentAvailable($isContentAvailable) {
         $this->isContentAvailable = (bool) $isContentAvailable;
         return $this;
+    }
+
+    /**
+     * @return int notification delivery priority
+     */
+    public function getPriority() {
+        return $this->priority;
+    }
+
+    /**
+     * @param int $priority notification delivery priority
+     * @return $this self instance
+     * @throws InvalidArgumentException when needed priority was unsupported
+     */
+    public function setPriority($priority) {
+        switch ($priority) {
+            case self::PRIORITY_IMMEDIATE:
+            case self::PRIORITY_POWERLESS:
+                $this->priority = (int) $priority;
+                return $this;
+            default:
+                throw new InvalidArgumentException(sprintf('unsupported priority code %s', $priority));
+        }
     }
 
     /**
