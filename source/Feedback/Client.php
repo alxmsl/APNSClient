@@ -7,7 +7,7 @@
  * http://www.wtfpl.net/ for more details.
  */
 
-namespace APNS\Feedback;
+namespace alxmsl\APNS\Feedback;
 use alxmsl\APNS\AbstractClient;
 use alxmsl\APNS\Feedback\Exception\FeedbackProcessorException;
 use Closure;
