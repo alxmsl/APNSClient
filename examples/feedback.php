@@ -14,7 +14,7 @@
 // Include autoloader
 include '../source/Autoloader.php';
 
-use APNS\Feedback\Client;
+use alxmsl\APNS\Feedback\Client;
 
 // Create APNS notification client
 $Client = new Client();

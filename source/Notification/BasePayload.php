@@ -274,11 +274,11 @@ class BasePayload implements JsonSerializable {
      * @return null|string object string view
      */
     public function __toString() {
-        $result = json_encode($this, JSON_UNESCAPED_UNICODE);
         $maximumPayloadSize = $this->getMaximumPayloadSize();
+        $result             = json_encode($this, JSON_UNESCAPED_UNICODE);
         if (strlen($result) > $maximumPayloadSize) {
-            $excess = mb_strlen($result) - $maximumPayloadSize;
-            $bodySize = mb_strlen($this->getAlertItem()->getBody());
+            $excess   = strlen($result) - $maximumPayloadSize;
+            $bodySize = strlen($this->getAlertItem()->getBody());
             try {
                 $this->getAlertItem()->crop($bodySize - $excess);
                 $result = json_encode($this, JSON_UNESCAPED_UNICODE);

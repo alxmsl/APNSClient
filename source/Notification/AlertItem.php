@@ -275,7 +275,7 @@ final class AlertItem implements JsonSerializable {
      */
     public function crop($length) {
         if ($length > $this->minimumLength) {
-            $this->body = mb_substr($this->body, 0, $length - 1) . self::POSTFIX;
+            $this->body = mb_strcut($this->body, 0, $length - strlen(self::POSTFIX)) . self::POSTFIX;
         } else {
             throw new CannotCropBodyException();
         }
