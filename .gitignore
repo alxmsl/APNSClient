@@ -3,3 +3,6 @@ examples/*.prod.php
 examples/*.pem
 vendor/
 composer.lock
+composer.phar
+phpunit.xml
+bootstrap.php
