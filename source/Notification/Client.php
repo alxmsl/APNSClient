@@ -155,6 +155,9 @@ final class Client extends AbstractClient {
         $command = $this->createPushCommand($token, $Payload);
         $sentBytes = @fwrite($this->getHandler(), $command);
         if ($sentBytes == strlen($command)) {
+            if ($this->getCommandCode() == self::COMMAND_SIMPLE_PUSH) {
+                return true;
+            }
             usleep($this->getReadTimeout());
             $data = @fread($this->getHandler(), self::LENGTH_RESPONSE);
             switch (true) {
