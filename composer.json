@@ -1,5 +1,5 @@
 {
-    "name": "alxmsl/apnsclient",
+    "name": "Topface/apnsclient",
     "description": "Client for Apple Push Notification Service (APNS)",
     "keywords": ["apns", "apple", "push", "notification"],
     "license": "WTFPL",
